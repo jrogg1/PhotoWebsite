@@ -224,6 +224,28 @@ function renderGrids() {
   });
 }
 
+function setUpBrokenImageHandling() {
+  document.addEventListener(
+    "error",
+    (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLImageElement)) return;
+
+      const shot = target.closest(".shot");
+      if (!shot) return;
+
+      const grid = shot.closest("[data-grid]");
+      shot.remove();
+
+      if (grid && !grid.querySelector(".shot") && !grid.querySelector(".empty-state")) {
+        const key = grid.getAttribute("data-grid") || "this section";
+        grid.innerHTML = `<p class="empty-state">No images found in ${key}.</p>`;
+      }
+    },
+    true
+  );
+}
+
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
 }
@@ -612,6 +634,7 @@ function setUpTabs() {
 async function init() {
   await loadPhotoSets();
   renderGrids();
+  setUpBrokenImageHandling();
   setUpGalleryOpen();
   setUpLightbox();
   setUpTabs();
