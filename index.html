@@ -12,7 +12,6 @@
     <div class="layout">
       <aside class="sidebar">
         <a class="brand" href="#">James Rogg </a>
-        <p class="intro">Kansas based photographer</p>
 
         <nav class="tab-nav" aria-label="Portfolio tabs" role="tablist">
           <button class="tab is-active" id="tab-portraits" role="tab" data-tab="portraits" aria-controls="panel-portraits" aria-selected="true">Portraits</button>
@@ -67,6 +66,15 @@
         </section>
       </main>
     </div>
+
+    <dialog class="lightbox" data-lightbox aria-label="Fullscreen image viewer">
+      <div class="lightbox-inner">
+        <button class="lightbox-close" type="button" data-lightbox-close aria-label="Close image viewer">Close</button>
+        <button class="lightbox-nav lightbox-prev" type="button" data-lightbox-prev aria-label="Previous image">Prev</button>
+        <img data-lightbox-image src="" alt="" />
+        <button class="lightbox-nav lightbox-next" type="button" data-lightbox-next aria-label="Next image">Next</button>
+      </div>
+    </dialog>
 
     <script src="assets/js/main.js" defer></script>
   </body>

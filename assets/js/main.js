@@ -3,78 +3,56 @@ const photoSets = {
     {
       src: "assets/images/portfolio/portraits/3R3A0184.jpg",
       alt: "Portrait photo 3R3A0184",
-      title: "Portrait 01",
-      meta: "Portraits",
       size: "tall"
     },
     {
       src: "assets/images/portfolio/portraits/3R3A0325.jpg",
       alt: "Portrait photo 3R3A0325",
-      title: "Portrait 02",
-      meta: "Portraits",
       size: "tall"
     },
     {
       src: "assets/images/portfolio/portraits/3R3A0485.jpg",
       alt: "Portrait photo 3R3A0485",
-      title: "Portrait 03",
-      meta: "Portraits",
       size: "wide"
     },
     {
       src: "assets/images/portfolio/portraits/3R3A0681.jpg",
       alt: "Portrait photo 3R3A0681",
-      title: "Portrait 04",
-      meta: "Portraits",
       size: "tall"
     },
     {
       src: "assets/images/portfolio/portraits/3R3A0735.jpg",
       alt: "Portrait photo 3R3A0735",
-      title: "Portrait 05",
-      meta: "Portraits",
       size: "tall"
     },
     {
       src: "assets/images/portfolio/portraits/3R3A0796.jpg",
       alt: "Portrait photo 3R3A0796",
-      title: "Portrait 06",
-      meta: "Portraits",
       size: "wide"
     },
     {
       src: "assets/images/portfolio/portraits/3R3A0911.jpg",
       alt: "Portrait photo 3R3A0911",
-      title: "Portrait 07",
-      meta: "Portraits",
       size: "wide"
     },
     {
       src: "assets/images/portfolio/portraits/3R3A6304.jpg",
       alt: "Portrait photo 3R3A6304",
-      title: "Portrait 08",
-      meta: "Portraits",
       size: "tall"
     },
     {
       src: "assets/images/portfolio/portraits/3R3A8430.jpg",
       alt: "Portrait photo 3R3A8430",
-      title: "Portrait 09",
-      meta: "Portraits",
       size: "wide"
     },
     {
       src: "assets/images/portfolio/portraits/3R3A9677.jpg",
       alt: "Portrait photo 3R3A9677",
-      title: "Portrait 10",
-      meta: "Portraits",
       size: "wide"
     },
     {
       src: "assets/images/portfolio/portraits/3R3A9828.jpg",
       alt: "Portrait photo 3R3A9828",
-      title: "Portrait 11",
-      meta: "Portraits",
       size: "wide"
     }
   ],
@@ -82,43 +60,31 @@ const photoSets = {
     {
       src: "assets/images/portfolio/places/3F5A6885.jpg",
       alt: "Places photo 3F5A6885",
-      title: "Place 01",
-      meta: "Places",
       size: "tall"
     },
     {
       src: "assets/images/portfolio/places/3F5A6927.jpg",
       alt: "Places photo 3F5A6927",
-      title: "Place 02",
-      meta: "Places",
       size: "wide"
     },
     {
       src: "assets/images/portfolio/places/3F5A6973.jpg",
       alt: "Places photo 3F5A6973",
-      title: "Place 03",
-      meta: "Places",
       size: "wide"
     },
     {
       src: "assets/images/portfolio/places/3F5A7083.jpg",
       alt: "Places photo 3F5A7083",
-      title: "Place 04",
-      meta: "Places",
       size: "tall"
     },
     {
       src: "assets/images/portfolio/places/3F5A7088.jpg",
       alt: "Places photo 3F5A7088",
-      title: "Place 05",
-      meta: "Places",
       size: "wide"
     },
     {
       src: "assets/images/portfolio/places/3F5A7279.jpg",
       alt: "Places photo 3F5A7279",
-      title: "Place 06",
-      meta: "Places",
       size: "wide"
     }
   ],
@@ -126,43 +92,31 @@ const photoSets = {
     {
       src: "assets/images/portfolio/animals/3F5A7468.jpg",
       alt: "Animals photo 3F5A7468",
-      title: "Animal 01",
-      meta: "Animals",
       size: "wide"
     },
     {
       src: "assets/images/portfolio/animals/3F5A7496.jpg",
       alt: "Animals photo 3F5A7496",
-      title: "Animal 02",
-      meta: "Animals",
       size: "wide"
     },
     {
       src: "assets/images/portfolio/animals/3F5A9356.jpg",
       alt: "Animals photo 3F5A9356",
-      title: "Animal 03",
-      meta: "Animals",
       size: "tall"
     },
     {
       src: "assets/images/portfolio/animals/3F5A9642.jpg",
       alt: "Animals photo 3F5A9642",
-      title: "Animal 04",
-      meta: "Animals",
       size: "wide"
     },
     {
       src: "assets/images/portfolio/animals/3F5A9751.jpg",
       alt: "Animals photo 3F5A9751",
-      title: "Animal 05",
-      meta: "Animals",
       size: "wide"
     },
     {
       src: "assets/images/portfolio/animals/_C7A5897.jpg",
       alt: "Animals photo _C7A5897",
-      title: "Animal 06",
-      meta: "Animals",
       size: "wide"
     }
   ]
@@ -171,16 +125,26 @@ const photoSets = {
 const tabs = Array.from(document.querySelectorAll(".tab"));
 const panels = Array.from(document.querySelectorAll(".panel"));
 const grids = Array.from(document.querySelectorAll("[data-grid]"));
+const lightbox = document.querySelector("[data-lightbox]");
+const lightboxImage = document.querySelector("[data-lightbox-image]");
+const lightboxCloseButton = document.querySelector("[data-lightbox-close]");
+const lightboxPrevButton = document.querySelector("[data-lightbox-prev]");
+const lightboxNextButton = document.querySelector("[data-lightbox-next]");
 let activeTabName = "portraits";
+let activeLightboxSet = "portraits";
+let activeLightboxIndex = 0;
+let touchStartX = 0;
 
-function renderSet(items) {
+function renderSet(setKey, items) {
   return items
     .map(
-      (item) => `
+      (item, index) => `
       <figure class="shot">
-        <div class="shot-media shot-media--${item.size}">
-          <img src="${item.src}" alt="${item.alt}" loading="lazy" />
-        </div>
+        <button class="shot-open" type="button" data-set="${setKey}" data-index="${index}" aria-label="Open image ${index + 1}">
+          <div class="shot-media shot-media--${item.size}">
+            <img src="${item.src}" alt="${item.alt}" loading="lazy" />
+          </div>
+        </button>
       </figure>
     `
     )
@@ -191,8 +155,47 @@ function renderGrids() {
   grids.forEach((grid) => {
     const key = grid.dataset.grid;
     const items = photoSets[key] || [];
-    grid.innerHTML = renderSet(items);
+    grid.innerHTML = renderSet(key, items);
   });
+}
+
+function renderLightboxImage() {
+  const setItems = photoSets[activeLightboxSet] || [];
+  if (!setItems.length || !lightboxImage) return;
+
+  const safeIndex = ((activeLightboxIndex % setItems.length) + setItems.length) % setItems.length;
+  const item = setItems[safeIndex];
+
+  activeLightboxIndex = safeIndex;
+  lightboxImage.src = item.src;
+  lightboxImage.alt = item.alt;
+}
+
+function openLightbox(setKey, index) {
+  const setItems = photoSets[setKey] || [];
+  if (!setItems.length || !lightbox) return;
+
+  activeLightboxSet = setKey;
+  activeLightboxIndex = index;
+  renderLightboxImage();
+
+  if (!lightbox.open && typeof lightbox.showModal === "function") {
+    lightbox.showModal();
+  }
+}
+
+function closeLightbox() {
+  if (lightbox?.open) {
+    lightbox.close();
+  }
+}
+
+function moveLightbox(step) {
+  const setItems = photoSets[activeLightboxSet] || [];
+  if (!setItems.length) return;
+
+  activeLightboxIndex += step;
+  renderLightboxImage();
 }
 
 function activateTab(tabName) {
@@ -219,6 +222,63 @@ function activateTab(tabName) {
   if (activeTabButton && window.matchMedia("(max-width: 940px)").matches) {
     activeTabButton.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
   }
+}
+
+function setUpGalleryOpen() {
+  document.addEventListener("click", (event) => {
+    const target = event.target;
+    const trigger = target instanceof Element ? target.closest(".shot-open") : null;
+    if (!trigger) return;
+
+    const setKey = trigger.dataset.set;
+    const index = Number(trigger.dataset.index || "0");
+    openLightbox(setKey, index);
+  });
+}
+
+function setUpLightbox() {
+  lightboxCloseButton?.addEventListener("click", closeLightbox);
+  lightboxPrevButton?.addEventListener("click", () => moveLightbox(-1));
+  lightboxNextButton?.addEventListener("click", () => moveLightbox(1));
+
+  document.addEventListener("keydown", (event) => {
+    if (!lightbox?.open) return;
+
+    if (event.key === "Escape") closeLightbox();
+    if (event.key === "ArrowLeft") moveLightbox(-1);
+    if (event.key === "ArrowRight") moveLightbox(1);
+  });
+
+  lightbox?.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+
+    const clickedImage = event.target === lightboxImage;
+    const clickedControl = target.closest("[data-lightbox-prev], [data-lightbox-next], [data-lightbox-close]");
+    if (clickedImage || clickedControl) return;
+
+    closeLightbox();
+  });
+
+  lightbox?.addEventListener("wheel", (event) => {
+    if (!lightbox.open) return;
+
+    event.preventDefault();
+    moveLightbox(event.deltaY > 0 ? 1 : -1);
+  }, { passive: false });
+
+  lightboxImage?.addEventListener("touchstart", (event) => {
+    touchStartX = event.changedTouches[0].clientX;
+  }, { passive: true });
+
+  lightboxImage?.addEventListener("touchend", (event) => {
+    const touchEndX = event.changedTouches[0].clientX;
+    const delta = touchEndX - touchStartX;
+
+    if (Math.abs(delta) < 40) return;
+    if (delta < 0) moveLightbox(1);
+    if (delta > 0) moveLightbox(-1);
+  }, { passive: true });
 }
 
 function setUpTabs() {
@@ -249,6 +309,8 @@ function setUpTabs() {
 
 function init() {
   renderGrids();
+  setUpGalleryOpen();
+  setUpLightbox();
   setUpTabs();
   activateTab(activeTabName);
 }
