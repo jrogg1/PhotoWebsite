@@ -44,6 +44,9 @@ const lightboxImage = document.querySelector("[data-lightbox-image]");
 const lightboxCloseButton = document.querySelector("[data-lightbox-close]");
 const lightboxPrevButton = document.querySelector("[data-lightbox-prev]");
 const lightboxNextButton = document.querySelector("[data-lightbox-next]");
+const sidebarMeta = document.querySelector(".sidebar-meta");
+const MOBILE_BREAKPOINT_QUERY = "(max-width: 940px)";
+const MOBILE_META_THRESHOLD = 80;
 
 let photoSets = Object.fromEntries(CATEGORIES.map((category) => [category, []]));
 let activeTabName = "portraits";
@@ -69,6 +72,30 @@ const MAX_ZOOM = 4;
 
 function setLightboxPageState(isOpen) {
   document.documentElement.classList.toggle("lightbox-open", isOpen);
+  updateMobileMetaVisibility();
+}
+
+function updateMobileMetaVisibility() {
+  if (!sidebarMeta) return;
+
+  const isNarrow = window.matchMedia(MOBILE_BREAKPOINT_QUERY).matches;
+  const isLightboxOpen = document.documentElement.classList.contains("lightbox-open");
+  if (!isNarrow || isLightboxOpen) {
+    sidebarMeta.classList.remove("is-bottom-visible");
+    return;
+  }
+
+  const scrollBottom = window.scrollY + window.innerHeight;
+  const pageBottom = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+  const nearBottom = pageBottom - scrollBottom <= MOBILE_META_THRESHOLD;
+  sidebarMeta.classList.toggle("is-bottom-visible", nearBottom);
+}
+
+function setUpMobileMetaVisibility() {
+  updateMobileMetaVisibility();
+  window.addEventListener("scroll", updateMobileMetaVisibility, { passive: true });
+  window.addEventListener("resize", updateMobileMetaVisibility);
+  window.addEventListener("orientationchange", updateMobileMetaVisibility);
 }
 
 function naturalSort(a, b) {
@@ -349,6 +376,8 @@ function activateTab(tabName) {
   if (activeTabButton && window.matchMedia("(max-width: 940px)").matches) {
     activeTabButton.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
   }
+
+  window.requestAnimationFrame(updateMobileMetaVisibility);
 }
 
 function setUpGalleryOpen() {
@@ -586,6 +615,7 @@ async function init() {
   setUpGalleryOpen();
   setUpLightbox();
   setUpTabs();
+  setUpMobileMetaVisibility();
   activateTab(activeTabName);
 }
 

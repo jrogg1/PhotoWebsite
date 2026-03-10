@@ -479,9 +479,15 @@ h2 {
     gap: 0.8rem;
   }
 
+  .brand {
+    display: block;
+    width: auto;
+    text-align: left;
+    padding-left: 0.58rem;
+  }
+
   .intro,
-  .quote,
-  .sidebar-meta {
+  .quote {
     display: none;
   }
 
@@ -500,6 +506,34 @@ h2 {
 
   .content {
     padding: 1rem;
+    padding-bottom: calc(constant(safe-area-inset-bottom) + 4.2rem);
+    padding-bottom: calc(env(safe-area-inset-bottom) + 4.2rem);
+  }
+
+  .sidebar-meta {
+    position: fixed;
+    left: 50%;
+    bottom: 0.6rem;
+    bottom: calc(constant(safe-area-inset-bottom) + 0.45rem);
+    bottom: calc(env(safe-area-inset-bottom) + 0.45rem);
+    transform: translateX(-50%);
+    z-index: 35;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    width: calc(100vw - 1.5rem);
+    font-size: 0.84rem;
+    line-height: 1.15;
+    text-align: center;
+  }
+
+  .sidebar-meta.is-bottom-visible {
+    display: flex;
+  }
+
+  html.lightbox-open .sidebar-meta {
+    display: none;
   }
 
   .photo-grid {
