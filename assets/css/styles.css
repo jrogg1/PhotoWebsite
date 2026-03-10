@@ -17,6 +17,8 @@ html,
 body {
   margin: 0;
   min-height: 100%;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -24,6 +26,13 @@ body {
   background: var(--bg);
   color: var(--text);
   line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+}
+
+html.lightbox-open,
+html.lightbox-open body {
+  background: #050505;
+  overscroll-behavior: none;
 }
 
 .grain {
@@ -37,15 +46,15 @@ a {
 .layout {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: minmax(260px, 320px) 1fr;
+  grid-template-columns: minmax(236px, 292px) 1fr;
 }
 
 .sidebar {
   border-right: 0;
-  padding: 2rem 1.5rem;
+  padding: 1.65rem 1.2rem;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 0.95rem;
   position: sticky;
   top: 0;
   height: 100vh;
@@ -54,7 +63,7 @@ a {
 .brand {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   text-decoration: none;
-  font-size: clamp(1.35rem, 2.2vw, 1.75rem);
+  font-size: clamp(1.16rem, 1.9vw, 1.46rem);
   font-weight: 500;
   letter-spacing: 0.02em;
   color: var(--accent);
@@ -68,23 +77,24 @@ a {
 .intro {
   margin: 0;
   color: var(--muted);
-  font-size: 0.95rem;
+  font-size: 0.88rem;
 }
 
 .tab-nav {
   display: grid;
-  gap: 0.5rem;
+  gap: 0.34rem;
 }
 
 .tab {
   border: 0;
   background: transparent;
   color: var(--muted);
-  padding: 0.58rem 0.72rem;
+  padding: 0.46rem 0.58rem;
   text-align: left;
   border-radius: 0;
   cursor: pointer;
   font: inherit;
+  font-size: 0.9rem;
   font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -114,13 +124,13 @@ a {
   color: var(--muted);
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
-  font-size: 1.08rem;
+  font-size: 0.97rem;
 }
 
 .sidebar-meta {
   display: grid;
-  gap: 0.4rem;
-  font-size: 0.92rem;
+  gap: 0.3rem;
+  font-size: 0.84rem;
 }
 
 .sidebar-meta a {
@@ -225,18 +235,24 @@ h2 {
 }
 
 .lightbox {
+  position: fixed;
+  inset: 0;
   width: 100vw;
+  width: 100dvw;
   height: 100vh;
-  max-width: none;
-  max-height: none;
+  height: 100dvh;
+  max-width: 100dvw;
+  max-height: 100dvh;
   margin: 0;
-  padding: 0;
+  padding: constant(safe-area-inset-top) constant(safe-area-inset-right) constant(safe-area-inset-bottom) constant(safe-area-inset-left);
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   border: 0;
-  background: rgba(0, 0, 0, 0.88);
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.76);
 }
 
 .lightbox::backdrop {
-  background: rgba(0, 0, 0, 0.82);
+  background: rgba(0, 0, 0, 0.68);
 }
 
 .lightbox-inner {
@@ -247,7 +263,7 @@ h2 {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  padding: 1.25rem 7.25rem;
+  padding: 0.45rem 1.8rem;
 }
 
 .lightbox img {
@@ -278,17 +294,26 @@ h2 {
 }
 
 .lightbox-close {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
+  position: fixed;
+  top: 0.7rem;
+  right: 0.7rem;
+  top: calc(env(safe-area-inset-top) + 0.45rem);
+  right: calc(env(safe-area-inset-right) + 0.45rem);
+  z-index: 40;
   border: 0;
   background: transparent;
   color: #ffffff;
   font: inherit;
-  font-size: 1.4rem;
+  font-size: clamp(1.25rem, 3.2vw, 1.45rem);
   line-height: 1;
-  padding: 0.1rem 0.35rem;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  display: grid;
+  place-items: center;
   cursor: pointer;
+  mix-blend-mode: difference;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
   -webkit-appearance: none;
   appearance: none;
 }
@@ -476,7 +501,7 @@ h2 {
   }
 
   .photo-grid {
-    columns: 2 180px;
+    columns: 2;
     column-gap: 0.75rem;
   }
 
@@ -485,22 +510,11 @@ h2 {
   }
 
   .lightbox-inner {
-    padding: 1rem 1.4rem 4.1rem;
+    padding: 0.2rem;
   }
 
   .lightbox-nav {
-    top: auto;
-    bottom: 1rem;
-    transform: none;
-    font-size: 2.4rem;
-  }
-
-  .lightbox-prev {
-    left: 2.4rem;
-  }
-
-  .lightbox-next {
-    right: 2.4rem;
+    display: none;
   }
 }
 
@@ -512,6 +526,18 @@ h2 {
   h1,
   h2 {
     font-size: 2.1rem;
+  }
+}
+
+@media (min-width: 1240px) {
+  .content {
+    padding-left: 0.9rem;
+    padding-right: 1.5rem;
+  }
+
+  .panel:not(.panel-copy) {
+    max-width: none;
+    margin: 0;
   }
 }
 

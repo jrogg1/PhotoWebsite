@@ -67,6 +67,10 @@ const activePointers = new Map();
 const MIN_ZOOM = 1;
 const MAX_ZOOM = 4;
 
+function setLightboxPageState(isOpen) {
+  document.documentElement.classList.toggle("lightbox-open", isOpen);
+}
+
 function naturalSort(a, b) {
   return a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" });
 }
@@ -292,11 +296,15 @@ function openLightbox(setKey, index) {
 
   if (!lightbox.open && typeof lightbox.showModal === "function") {
     lightbox.showModal();
+    setLightboxPageState(true);
+  } else if (lightbox.open) {
+    setLightboxPageState(true);
   }
 }
 
 function closeLightbox() {
   clearClickNavTimer();
+  setLightboxPageState(false);
 
   if (lightbox?.open) {
     lightbox.close();
@@ -366,6 +374,7 @@ function setUpLightbox() {
     moveLightbox(1);
   });
   lightbox?.addEventListener("close", () => {
+    setLightboxPageState(false);
     clearClickNavTimer();
     resetZoom();
   });
