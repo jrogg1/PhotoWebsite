@@ -6,19 +6,9 @@ const photoSets = {
       size: "tall"
     },
     {
-      src: "assets/images/portfolio/portraits/3R3A0325.jpg",
-      alt: "Portrait photo 3R3A0325",
-      size: "tall"
-    },
-    {
       src: "assets/images/portfolio/portraits/3R3A0485.jpg",
       alt: "Portrait photo 3R3A0485",
       size: "wide"
-    },
-    {
-      src: "assets/images/portfolio/portraits/3R3A0681.jpg",
-      alt: "Portrait photo 3R3A0681",
-      size: "tall"
     },
     {
       src: "assets/images/portfolio/portraits/3R3A0735.jpg",
@@ -113,14 +103,15 @@ const photoSets = {
       src: "assets/images/portfolio/animals/3F5A9751.jpg",
       alt: "Animals photo 3F5A9751",
       size: "wide"
-    },
-    {
-      src: "assets/images/portfolio/animals/_C7A5897.jpg",
-      alt: "Animals photo _C7A5897",
-      size: "wide"
     }
   ]
 };
+
+const ASSET_VERSION = "20260310b";
+
+function withVersion(src) {
+  return `${src}?v=${ASSET_VERSION}`;
+}
 
 const tabs = Array.from(document.querySelectorAll(".tab"));
 const panels = Array.from(document.querySelectorAll(".panel"));
@@ -142,7 +133,7 @@ function renderSet(setKey, items) {
       <figure class="shot">
         <button class="shot-open" type="button" data-set="${setKey}" data-index="${index}" aria-label="Open image ${index + 1}">
           <div class="shot-media shot-media--${item.size}">
-            <img src="${item.src}" alt="${item.alt}" loading="lazy" />
+            <img src="${withVersion(item.src)}" alt="${item.alt}" loading="lazy" />
           </div>
         </button>
       </figure>
@@ -167,7 +158,7 @@ function renderLightboxImage() {
   const item = setItems[safeIndex];
 
   activeLightboxIndex = safeIndex;
-  lightboxImage.src = item.src;
+  lightboxImage.src = withVersion(item.src);
   lightboxImage.alt = item.alt;
 }
 
