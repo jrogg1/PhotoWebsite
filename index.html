@@ -4,12 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>James Rogg</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap"
-      rel="stylesheet"
-    />
     <link rel="stylesheet" href="assets/css/styles.css" />
   </head>
   <body>
@@ -36,26 +30,14 @@
 
       <main class="content" id="content">
         <section class="panel is-active" id="panel-portraits" data-panel="portraits" role="tabpanel" aria-labelledby="tab-portraits" tabindex="-1">
-          <header class="panel-head">
-            <h1>Portraits</h1>
-            <p>People-focused images made with simple direction, natural expression, and clean light.</p>
-          </header>
-          <div class="photo-grid" data-grid="portraits"></div>
+          <div class="photo-grid" data-grid="portraits" aria-live="polite"></div>
         </section>
 
         <section class="panel" id="panel-places" data-panel="places" role="tabpanel" aria-labelledby="tab-places" tabindex="-1" hidden>
-          <header class="panel-head">
-            <h2>Places</h2>
-            <p>Cities, roads, and landscapes captured as visual travel notes.</p>
-          </header>
           <div class="photo-grid" data-grid="places"></div>
         </section>
 
         <section class="panel" id="panel-animals" data-panel="animals" role="tabpanel" aria-labelledby="tab-animals" tabindex="-1" hidden>
-          <header class="panel-head">
-            <h2>Animals</h2>
-            <p>Animal portraits and candid moments with a focus on mood and detail.</p>
-          </header>
           <div class="photo-grid" data-grid="animals"></div>
         </section>
 

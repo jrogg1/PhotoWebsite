@@ -181,10 +181,6 @@ function renderSet(items) {
         <div class="shot-media shot-media--${item.size}">
           <img src="${item.src}" alt="${item.alt}" loading="lazy" />
         </div>
-        <figcaption>
-          <p class="shot-title">${item.title}</p>
-          <p class="shot-meta">${item.meta}</p>
-        </figcaption>
       </figure>
     `
     )
