@@ -5,10 +5,10 @@ A responsive, tab-driven photography portfolio inspired by a minimalist, image-f
 ## What is included
 
 - Desktop sidebar + mobile horizontal tab navigation
-- Tabs: `stills`, `portraits`, `places`, `animals`, `about`, `contact`
+- Tabs: `portraits`, `places`, `animals`, `about`, `contact`
 - Photo panels with masonry-style layout
 - About and Contact content panels
-- Real image folders wired into tabs (`portraits`, `places`, `animals`) plus a mixed `stills` set
+- Real image folders wired into tabs (`portraits`, `places`, `animals`)
 
 ## Project structure
 
@@ -72,7 +72,6 @@ Each item has:
 
 Tabs are defined in `/index.html` via `data-tab`.
 
-- `stills`
 - `portraits`
 - `places`
 - `animals`

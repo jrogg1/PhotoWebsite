@@ -1,62 +1,4 @@
 const photoSets = {
-  stills: [
-    {
-      src: "assets/images/portfolio/portraits/3R3A8430.jpg",
-      alt: "Stills photo from portraits collection",
-      title: "Frame 01",
-      meta: "Stills",
-      size: "wide"
-    },
-    {
-      src: "assets/images/portfolio/places/3F5A7083.jpg",
-      alt: "Stills photo from places collection",
-      title: "Frame 02",
-      meta: "Stills",
-      size: "tall"
-    },
-    {
-      src: "assets/images/portfolio/animals/3F5A9642.jpg",
-      alt: "Stills photo from animals collection",
-      title: "Frame 03",
-      meta: "Stills",
-      size: "wide"
-    },
-    {
-      src: "assets/images/portfolio/portraits/3R3A0184.jpg",
-      alt: "Stills photo from portraits collection",
-      title: "Frame 04",
-      meta: "Stills",
-      size: "tall"
-    },
-    {
-      src: "assets/images/portfolio/places/3F5A7279.jpg",
-      alt: "Stills photo from places collection",
-      title: "Frame 05",
-      meta: "Stills",
-      size: "wide"
-    },
-    {
-      src: "assets/images/portfolio/animals/3F5A9356.jpg",
-      alt: "Stills photo from animals collection",
-      title: "Frame 06",
-      meta: "Stills",
-      size: "tall"
-    },
-    {
-      src: "assets/images/portfolio/portraits/3R3A0911.jpg",
-      alt: "Stills photo from portraits collection",
-      title: "Frame 07",
-      meta: "Stills",
-      size: "wide"
-    },
-    {
-      src: "assets/images/portfolio/places/3F5A6885.jpg",
-      alt: "Stills photo from places collection",
-      title: "Frame 08",
-      meta: "Stills",
-      size: "tall"
-    }
-  ],
   portraits: [
     {
       src: "assets/images/portfolio/portraits/3R3A0184.jpg",
@@ -229,7 +171,7 @@ const photoSets = {
 const tabs = Array.from(document.querySelectorAll(".tab"));
 const panels = Array.from(document.querySelectorAll(".panel"));
 const grids = Array.from(document.querySelectorAll("[data-grid]"));
-let activeTabName = "stills";
+let activeTabName = "portraits";
 
 function renderSet(items) {
   return items
