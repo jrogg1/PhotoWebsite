@@ -17,7 +17,6 @@
           <button class="tab is-active" id="tab-portraits" role="tab" data-tab="portraits" aria-controls="panel-portraits" aria-selected="true">Portraits</button>
           <button class="tab" id="tab-places" role="tab" data-tab="places" aria-controls="panel-places" aria-selected="false">Places</button>
           <button class="tab" id="tab-animals" role="tab" data-tab="animals" aria-controls="panel-animals" aria-selected="false">Animals</button>
-          <button class="tab" id="tab-contact" role="tab" data-tab="contact" aria-controls="panel-contact" aria-selected="false">Contact</button>
         </nav>
 
 
@@ -38,31 +37,6 @@
 
         <section class="panel" id="panel-animals" data-panel="animals" role="tabpanel" aria-labelledby="tab-animals" tabindex="-1" hidden>
           <div class="photo-grid" data-grid="animals"></div>
-        </section>
-
-        <section class="panel panel-copy" id="panel-contact" data-panel="contact" role="tabpanel" aria-labelledby="tab-contact" tabindex="-1" hidden>
-          <header class="panel-head">
-            <h2>Contact</h2>
-          </header>
-          <div class="copy-block">
-            <p>For bookings, collaborations, or licensing, send your project details and we can talk details!</p>
-          </div>
-
-          <form class="contact-form" action="mailto:hello@jamesroggphoto.com" method="post" enctype="text/plain">
-            <label>
-              Name
-              <input type="text" name="name" required />
-            </label>
-            <label>
-              Email
-              <input type="email" name="email" required />
-            </label>
-            <label>
-              Project
-              <textarea name="message" rows="5" required></textarea>
-            </label>
-            <button type="submit">Send Inquiry</button>
-          </form>
         </section>
       </main>
     </div>
