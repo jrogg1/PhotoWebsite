@@ -5,35 +5,6 @@ const REPO_CONFIG = {
   branch: "main"
 };
 
-const FALLBACK_FILES = {
-  portraits: [
-    "3R3A0184.jpg",
-    "3R3A0485.jpg",
-    "3R3A0735.jpg",
-    "3R3A0796.jpg",
-    "3R3A0911.jpg",
-    "3R3A6304.jpg",
-    "3R3A8430.jpg",
-    "3R3A9677.jpg",
-    "3R3A9828.jpg"
-  ],
-  places: [
-    "3F5A6885.jpg",
-    "3F5A6927.jpg",
-    "3F5A6973.jpg",
-    "3F5A7083.jpg",
-    "3F5A7088.jpg",
-    "3F5A7279.jpg"
-  ],
-  animals: [
-    "3F5A7468.jpg",
-    "3F5A7496.jpg",
-    "3F5A9356.jpg",
-    "3F5A9642.jpg",
-    "3F5A9751.jpg"
-  ]
-};
-
 const IMAGE_EXTENSIONS = /\.(jpg|jpeg|png|webp|heic|avif)$/i;
 
 const tabs = Array.from(document.querySelectorAll(".tab"));
@@ -113,13 +84,6 @@ function buildLocalSrc(category, filename, version = "") {
   return version ? `${src}?v=${version}` : src;
 }
 
-function fallbackSet(category) {
-  return (FALLBACK_FILES[category] || []).map((filename) => ({
-    src: buildLocalSrc(category, filename),
-    alt: fileToAlt(filename, category)
-  }));
-}
-
 async function loadFromDirectoryListing(category) {
   const folderUrl = `assets/images/portfolio/${category}/`;
 
@@ -188,7 +152,6 @@ async function loadFromGitHubApi(category) {
 async function loadCategory(category) {
   let items = await loadFromDirectoryListing(category);
   if (!items.length) items = await loadFromGitHubApi(category);
-  if (!items.length) items = fallbackSet(category);
   photoSets[category] = items;
 }
 
