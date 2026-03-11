@@ -2,7 +2,7 @@ const CATEGORIES = ["portraits", "places", "animals"];
 const REPO_CONFIG = {
   owner: "jrogg1",
   repo: "PhotoWebsite",
-  branch: "main"
+  branches: ["Development", "main"]
 };
 
 const IMAGE_EXTENSIONS = /\.(jpg|jpeg|png|webp|heic|avif)$/i;
@@ -123,30 +123,38 @@ async function loadFromDirectoryListing(category) {
 }
 
 async function loadFromGitHubApi(category) {
-  const apiUrl = `https://api.github.com/repos/${REPO_CONFIG.owner}/${REPO_CONFIG.repo}/contents/assets/images/portfolio/${category}?ref=${REPO_CONFIG.branch}`;
+  const branches = REPO_CONFIG.branches || [];
 
-  try {
-    const response = await fetch(apiUrl, {
-      cache: "no-store",
-      headers: { Accept: "application/vnd.github+json" }
-    });
+  for (const branch of branches) {
+    const apiUrl = `https://api.github.com/repos/${REPO_CONFIG.owner}/${REPO_CONFIG.repo}/contents/assets/images/portfolio/${category}?ref=${encodeURIComponent(branch)}`;
 
-    if (!response.ok) return [];
+    try {
+      const response = await fetch(apiUrl, {
+        cache: "no-store",
+        headers: { Accept: "application/vnd.github+json" }
+      });
 
-    const data = await response.json();
-    if (!Array.isArray(data)) return [];
+      if (!response.ok) continue;
 
-    const files = data
-      .filter((entry) => entry.type === "file" && IMAGE_EXTENSIONS.test(entry.name))
-      .sort((a, b) => naturalSort(a.name, b.name));
+      const data = await response.json();
+      if (!Array.isArray(data)) continue;
 
-    return files.map((entry) => ({
-      src: buildLocalSrc(category, entry.name, entry.sha ? entry.sha.slice(0, 10) : ""),
-      alt: fileToAlt(entry.name, category)
-    }));
-  } catch {
-    return [];
+      const files = data
+        .filter((entry) => entry.type === "file" && IMAGE_EXTENSIONS.test(entry.name))
+        .sort((a, b) => naturalSort(a.name, b.name));
+
+      if (!files.length) continue;
+
+      return files.map((entry) => ({
+        src: buildLocalSrc(category, entry.name, entry.sha ? entry.sha.slice(0, 10) : ""),
+        alt: fileToAlt(entry.name, category)
+      }));
+    } catch {
+      // Try the next branch.
+    }
   }
+
+  return [];
 }
 
 async function loadCategory(category) {
