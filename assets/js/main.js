@@ -2,36 +2,7 @@ const CATEGORIES = ["portraits", "places", "animals"];
 const REPO_CONFIG = {
   owner: "jrogg1",
   repo: "PhotoWebsite",
-  branch: "main"
-};
-
-const FALLBACK_FILES = {
-  portraits: [
-    "3R3A0184.jpg",
-    "3R3A0485.jpg",
-    "3R3A0735.jpg",
-    "3R3A0796.jpg",
-    "3R3A0911.jpg",
-    "3R3A6304.jpg",
-    "3R3A8430.jpg",
-    "3R3A9677.jpg",
-    "3R3A9828.jpg"
-  ],
-  places: [
-    "3F5A6885.jpg",
-    "3F5A6927.jpg",
-    "3F5A6973.jpg",
-    "3F5A7083.jpg",
-    "3F5A7088.jpg",
-    "3F5A7279.jpg"
-  ],
-  animals: [
-    "3F5A7468.jpg",
-    "3F5A7496.jpg",
-    "3F5A9356.jpg",
-    "3F5A9642.jpg",
-    "3F5A9751.jpg"
-  ]
+  branches: ["Development", "main"]
 };
 
 const IMAGE_EXTENSIONS = /\.(jpg|jpeg|png|webp|heic|avif)$/i;
@@ -44,6 +15,9 @@ const lightboxImage = document.querySelector("[data-lightbox-image]");
 const lightboxCloseButton = document.querySelector("[data-lightbox-close]");
 const lightboxPrevButton = document.querySelector("[data-lightbox-prev]");
 const lightboxNextButton = document.querySelector("[data-lightbox-next]");
+const sidebarMeta = document.querySelector(".sidebar-meta");
+const MOBILE_BREAKPOINT_QUERY = "(max-width: 940px)";
+const MOBILE_META_THRESHOLD = 80;
 
 let photoSets = Object.fromEntries(CATEGORIES.map((category) => [category, []]));
 let activeTabName = "portraits";
@@ -67,6 +41,34 @@ const activePointers = new Map();
 const MIN_ZOOM = 1;
 const MAX_ZOOM = 4;
 
+function setLightboxPageState(isOpen) {
+  document.documentElement.classList.toggle("lightbox-open", isOpen);
+  updateMobileMetaVisibility();
+}
+
+function updateMobileMetaVisibility() {
+  if (!sidebarMeta) return;
+
+  const isNarrow = window.matchMedia(MOBILE_BREAKPOINT_QUERY).matches;
+  const isLightboxOpen = document.documentElement.classList.contains("lightbox-open");
+  if (!isNarrow || isLightboxOpen) {
+    sidebarMeta.classList.remove("is-bottom-visible");
+    return;
+  }
+
+  const scrollBottom = window.scrollY + window.innerHeight;
+  const pageBottom = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+  const nearBottom = pageBottom - scrollBottom <= MOBILE_META_THRESHOLD;
+  sidebarMeta.classList.toggle("is-bottom-visible", nearBottom);
+}
+
+function setUpMobileMetaVisibility() {
+  updateMobileMetaVisibility();
+  window.addEventListener("scroll", updateMobileMetaVisibility, { passive: true });
+  window.addEventListener("resize", updateMobileMetaVisibility);
+  window.addEventListener("orientationchange", updateMobileMetaVisibility);
+}
+
 function naturalSort(a, b) {
   return a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" });
 }
@@ -80,13 +82,6 @@ function buildLocalSrc(category, filename, version = "") {
   const encodedName = encodeURIComponent(filename);
   const src = `assets/images/portfolio/${category}/${encodedName}`;
   return version ? `${src}?v=${version}` : src;
-}
-
-function fallbackSet(category) {
-  return (FALLBACK_FILES[category] || []).map((filename) => ({
-    src: buildLocalSrc(category, filename),
-    alt: fileToAlt(filename, category)
-  }));
 }
 
 async function loadFromDirectoryListing(category) {
@@ -128,36 +123,43 @@ async function loadFromDirectoryListing(category) {
 }
 
 async function loadFromGitHubApi(category) {
-  const apiUrl = `https://api.github.com/repos/${REPO_CONFIG.owner}/${REPO_CONFIG.repo}/contents/assets/images/portfolio/${category}?ref=${REPO_CONFIG.branch}`;
+  const branches = REPO_CONFIG.branches || [];
 
-  try {
-    const response = await fetch(apiUrl, {
-      cache: "no-store",
-      headers: { Accept: "application/vnd.github+json" }
-    });
+  for (const branch of branches) {
+    const apiUrl = `https://api.github.com/repos/${REPO_CONFIG.owner}/${REPO_CONFIG.repo}/contents/assets/images/portfolio/${category}?ref=${encodeURIComponent(branch)}`;
 
-    if (!response.ok) return [];
+    try {
+      const response = await fetch(apiUrl, {
+        cache: "no-store",
+        headers: { Accept: "application/vnd.github+json" }
+      });
 
-    const data = await response.json();
-    if (!Array.isArray(data)) return [];
+      if (!response.ok) continue;
 
-    const files = data
-      .filter((entry) => entry.type === "file" && IMAGE_EXTENSIONS.test(entry.name))
-      .sort((a, b) => naturalSort(a.name, b.name));
+      const data = await response.json();
+      if (!Array.isArray(data)) continue;
 
-    return files.map((entry) => ({
-      src: buildLocalSrc(category, entry.name, entry.sha ? entry.sha.slice(0, 10) : ""),
-      alt: fileToAlt(entry.name, category)
-    }));
-  } catch {
-    return [];
+      const files = data
+        .filter((entry) => entry.type === "file" && IMAGE_EXTENSIONS.test(entry.name))
+        .sort((a, b) => naturalSort(a.name, b.name));
+
+      if (!files.length) continue;
+
+      return files.map((entry) => ({
+        src: buildLocalSrc(category, entry.name, entry.sha ? entry.sha.slice(0, 10) : ""),
+        alt: fileToAlt(entry.name, category)
+      }));
+    } catch {
+      // Try the next branch.
+    }
   }
+
+  return [];
 }
 
 async function loadCategory(category) {
   let items = await loadFromDirectoryListing(category);
   if (!items.length) items = await loadFromGitHubApi(category);
-  if (!items.length) items = fallbackSet(category);
   photoSets[category] = items;
 }
 
@@ -191,6 +193,28 @@ function renderGrids() {
     const items = photoSets[key] || [];
     grid.innerHTML = renderSet(key, items);
   });
+}
+
+function setUpBrokenImageHandling() {
+  document.addEventListener(
+    "error",
+    (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLImageElement)) return;
+
+      const shot = target.closest(".shot");
+      if (!shot) return;
+
+      const grid = shot.closest("[data-grid]");
+      shot.remove();
+
+      if (grid && !grid.querySelector(".shot") && !grid.querySelector(".empty-state")) {
+        const key = grid.getAttribute("data-grid") || "this section";
+        grid.innerHTML = `<p class="empty-state">No images found in ${key}.</p>`;
+      }
+    },
+    true
+  );
 }
 
 function clamp(value, min, max) {
@@ -292,11 +316,15 @@ function openLightbox(setKey, index) {
 
   if (!lightbox.open && typeof lightbox.showModal === "function") {
     lightbox.showModal();
+    setLightboxPageState(true);
+  } else if (lightbox.open) {
+    setLightboxPageState(true);
   }
 }
 
 function closeLightbox() {
   clearClickNavTimer();
+  setLightboxPageState(false);
 
   if (lightbox?.open) {
     lightbox.close();
@@ -341,6 +369,8 @@ function activateTab(tabName) {
   if (activeTabButton && window.matchMedia("(max-width: 940px)").matches) {
     activeTabButton.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
   }
+
+  window.requestAnimationFrame(updateMobileMetaVisibility);
 }
 
 function setUpGalleryOpen() {
@@ -366,6 +396,7 @@ function setUpLightbox() {
     moveLightbox(1);
   });
   lightbox?.addEventListener("close", () => {
+    setLightboxPageState(false);
     clearClickNavTimer();
     resetZoom();
   });
@@ -574,9 +605,11 @@ function setUpTabs() {
 async function init() {
   await loadPhotoSets();
   renderGrids();
+  setUpBrokenImageHandling();
   setUpGalleryOpen();
   setUpLightbox();
   setUpTabs();
+  setUpMobileMetaVisibility();
   activateTab(activeTabName);
 }
 
